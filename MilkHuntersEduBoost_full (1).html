@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MilkHunters EduBoost</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#0a0710; --bg2:#120a1c;
+    --glow1:rgba(163,94,255,.18); --glow2:rgba(90,140,255,.12);
+    --surface:#150e22; --surface2:#1b122b; --border:#2a1b45;
+    --accentA:#8b5cf6; --accentB:#60a5fa;
+    --txt:#f1e9ff; --muted:#bba8d9;
+  }
+  *{ box-sizing:border-box }
+  html,body{ height:100% }
+  body{
+    margin:0; color:var(--txt); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background:
+      radial-gradient(1200px 520px at -10% -20%, var(--glow1), transparent 60%),
+      radial-gradient(900px 520px at 110% -10%, var(--glow2), transparent 60%),
+      linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 60%);
+  }
+  .wrap{ max-width:1180px; margin:22px auto; padding:0 16px }
+  header{
+    display:flex; align-items:center; gap:14px; margin-bottom:16px;
+    padding:12px; border-radius:16px;
+    background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
+    border:1px solid var(--border);
+    box-shadow:0 14px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .logo{
+    width:56px;height:56px;border-radius:14px; flex:0 0 56px;
+    background:conic-gradient(from 0deg, var(--accentA), var(--accentB), var(--accentA));
+    display:grid; place-items:center; color:#1a0d25; font-weight:900;
+    box-shadow:0 12px 30px rgba(139,92,246,.28);
+    letter-spacing:.5px;
+  }
+  h1{ font-size:21px; margin:0; letter-spacing:.3px }
+  .toolbar{ margin-left:auto; display:flex; gap:8px }
+  .btn{
+    appearance:none; border:0; cursor:pointer; user-select:none;
+    padding:8px 12px; border-radius:12px; font-weight:800;
+    color:#0f1222;
+    background:linear-gradient(90deg,var(--accentA),var(--accentB));
+    box-shadow:0 6px 22px rgba(139,92,246,.28);
+    transition:transform .06s ease, filter .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{ transform:translateY(1px) scale(.99) }
+  .btn.ghost{
+    background:rgba(255,255,255,.06); color:#f1e9ff;
+    border:1px solid var(--border); box-shadow:none;
+  }
+  .small{ padding:6px 10px; border-radius:10px; font-size:12px }
+  .grid{ display:grid; grid-template-columns:360px 1fr; gap:16px }
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
+    border:1px solid var(--border); border-radius:16px; padding:14px;
+    box-shadow:0 16px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  input, textarea{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border);
+                   background:rgba(26,16,39,.5); color:#f1e9ff; }
+  .divider{ height:1px; background:rgba(255,255,255,.08); margin:10px 0 }
+  .muted{ color:#bba8d9; font-size:13px }
+  .row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+  .right{ margin-left:auto }
+  .pill{ padding:4px 10px; border-radius:999px; background:#201235; border:1px solid var(--border); font-weight:800; color:#efd6ff; font-size:12px }
+  .points{ font-size:28px; font-weight:900; font-family:'JetBrains Mono', monospace; color:#60a5fa }
+  .avatar{ width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,#8b5cf6,#60a5fa); color:#1a0d25; display:grid; place-items:center; font-weight:900; overflow:hidden }
+  .avatar img{ width:100%; height:100%; object-fit:cover; display:block }
+  .name{ font-weight:900; letter-spacing:.2px }
+  .badgesInline{ display:flex; gap:6px; align-items:center; flex-wrap:wrap }
+  .badge{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); padding:5px 8px; border-radius:9px; font-weight:800; color:#f1e9ff; font-size:12px }
+  .rosterList{ max-height:560px; overflow:auto; display:flex; gap:8px; flex-direction:column }
+  .studentRow{ display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; padding:10px; border-radius:12px; background:rgba(255,255,255,.04); border:1px solid var(--border) }
+  .meta{ color:#d9c8f3; font-size:12px; display:flex; gap:8px; align-items:center }
+  .fire0{ background:#281b40 } .fire1{ background:#3a235b } .fire2{ background:#4b3180 }
+  .fire3{ background:linear-gradient(90deg,#7c3aed,#3b82f6) } .fire4{ background:linear-gradient(90deg,#8b5cf6,#60a5fa) }
+  .history{ display:flex; flex-direction:column; gap:6px; max-height:220px; overflow:auto }
+  .history .h{ display:flex; justify-content:space-between; gap:8px; background:rgba(255,255,255,.04); border:1px solid var(--border); padding:8px; border-radius:10px; font-size:13px }
+  .h.negative{ border-color:rgba(255,138,138,.45) }
+  .storeRow{ display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; padding:10px; border-radius:12px; background:rgba(255,255,255,.04); border:1px solid var(--border); margin-bottom:8px }
+  .chip{ background:#22143a; border:1px solid var(--border); padding:8px 10px; border-radius:10px; font-weight:800; color:#f1e9ff }
+  footer{ margin-top:20px; text-align:center; color:#bca7d9 }
+  .empty{ border:1px dashed rgba(255,255,255,.25); border-radius:10px; padding:10px; text-align:center; color:#d9c8f3; margin-top:8px }
+  .confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:9999 }
+  .piece{ position:absolute; font-size:18px; animation: fly 1200ms ease-out forwards }
+  @keyframes fly{ 0%{ transform:translate(var(--x,0), var(--y,0)) scale(0.6) rotate(0deg); opacity:1 } 100%{ transform:translate(calc(var(--x,0) * 3), calc(var(--y,0) * 3 + 60px)) scale(1) rotate(360deg); opacity:0 } }
+  .toast{ position:fixed; right:12px; bottom:12px; background:#22143a; border:1px solid var(--border); padding:10px 14px; border-radius:10px; font-weight:800; display:none }
+</style>
+</head>
+<body>
+<div class="confetti" id="confetti"></div>
+<div class="wrap" id="app">
+  <header>
+    <div class="logo">EB</div>
+    <div><h1>MilkHunters EduBoost</h1></div>
+    <div class="toolbar right"><button id="muteBtn" class="btn small" onclick="toggleSound()">🔊 Sound</button></div>
+  </header>
+
+  <div id="authView" class="card" style="max-width:560px; margin:24px auto">
+    <h2 style="margin:0 0 8px 0">Sign in</h2>
+    <div class="row" style="margin-bottom:8px">
+      <button class="btn small" onclick="showAuth('teacher')">Teacher</button>
+      <button class="btn small ghost" onclick="showAuth('student')">Student</button>
+    </div>
+    <div id="authTeacher">
+      <label>Teacher PIN</label>
+      <input id="tPin" type="tel" placeholder="4–12 digits" inputmode="numeric" autocomplete="off" autocapitalize="off"
+             onkeydown="if(event.key==='Enter'){teacherLogin();}" />
+      <div class="row" style="margin-top:8px">
+        <button class="btn" onclick="teacherLogin()">Enter</button>
+        <button class="btn ghost" onclick="resetApp()">Reset app data</button>
+      </div>
+    </div>
+    <div id="authStudent" style="display:none">
+      <label>Your name</label>
+      <input id="sName" type="text" placeholder="e.g., Anna" autocomplete="off" autocapitalize="words"
+             onkeydown="if(event.key==='Enter'){studentLogin();}" />
+      <div class="row" style="margin-top:8px">
+        <button class="btn" onclick="studentLogin()">Enter</button>
+        <button class="btn ghost" onclick="showAuth('teacher')">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="teacherView" style="display:none">
+    <div class="grid">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <div><div style="font-weight:900">Class roster</div></div>
+          <div class="row"><button class="btn small ghost" onclick="resetApp()">Reset</button></div>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <input id="newStudent" type="text" placeholder="New student name" onkeydown="if(event.key==='Enter'){addStudentClick();}" />
+          <button class="btn small" onclick="addStudentClick()">Add</button>
+        </div>
+
+        <details style="margin-top:8px">
+          <summary class="muted">Bulk add (comma or newline)</summary>
+          <textarea id="bulk" rows="3" placeholder="Anna\nMark\nElina"></textarea>
+          <div class="row" style="margin-top:6px">
+            <button class="btn small" onclick="bulkAddClick()">Add all</button>
+            <button class="btn small ghost" onclick="clearClass()">Clear class</button>
+          </div>
+        </details>
+
+        <div class="divider"></div>
+        <input id="search" type="text" placeholder="Search by name…" oninput="renderRoster()" />
+        <div id="roster" class="rosterList"></div>
+        <div id="emptyHint" class="empty" style="display:none">No students yet — add names above.</div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between">
+            <div style="flex:1">
+              <div class="row" style="gap:10px">
+                <div class="avatar" id="pfAvatar"></div>
+                <div>
+                  <div class="name" id="pfName">—</div>
+                  <div id="nameBadges" class="badgesInline"></div>
+                </div>
+              </div>
+              <div class="muted" style="margin-top:4px">Selected student</div>
+            </div>
+            <div class="row">
+              <button class="btn small ghost" onclick="editAvatar()">Edit avatar</button>
+              <button class="btn small ghost" onclick="resetStudent()">Reset student</button>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="row"><div>Points</div><div class="points" id="pointsVal">0</div></div>
+          <div class="row"><div>Streak</div><div id="streakVal" class="pill fire0">🔥 0 days</div></div>
+          <div class="row"><div>Redeemed</div><div id="redeemedCount">0</div></div>
+          <div class="row"><div>Last study day</div><div id="lastStudy">—</div></div>
+
+          <div class="divider"></div>
+          <div class="muted">Actions</div>
+          <div class="row" style="margin-top:6px">
+            <button class="btn small" onclick="act('study', event)">Studied (+20)</button>
+            <button class="btn small" onclick="act('hw', event)">Homework (+40)</button>
+            <button class="btn small" onclick="act('task', event)">Task (+50)</button>
+            <button class="btn small" onclick="act('help', event)">Help (+30)</button>
+            <button class="btn small" onclick="act('quiz', event)">Quiz (+20)</button>
+          </div>
+          <div class="row" style="margin-top:6px">
+            <button class="btn small ghost" onclick="act('warn', event)">⚠️ Bad behavior (−10)</button>
+            <button class="btn small ghost" onclick="act('late', event)">⏰ Late (−20)</button>
+            <button class="btn small ghost" onclick="act('miss', event)">📄 Missing HW (−30)</button>
+            <button class="btn small ghost" onclick="act('disrupt', event)">💥 Disrupted lesson (−50)</button>
+          </div>
+
+          <div class="divider"></div>
+          <div class="muted">Manual points</div>
+          <div class="row" style="margin-top:6px">
+            <input id="manualPoints" style="max-width:180px" type="text" placeholder="+100 or -50" onkeydown="if(event.key==='Enter'){applyManualClick(event);}"/>
+            <button class="btn small" onclick="applyManualClick(event)">Apply</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="row" style="justify-content:space-between; align-items:center">
+            <div><div style="font-weight:900">Rewards Store</div><div class="muted">Click to redeem for selected student</div></div>
+            <div class="pill" id="walletBadge">— pts</div>
+          </div>
+          <div id="storeItems" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="row" style="justify-content:space-between">
+            <div style="font-weight:900">History</div>
+            <button class="btn small ghost" onclick="clearHistory()">Clear history</button>
+          </div>
+          <div id="historyBox" class="history" style="margin-top:8px"></div>
+          <div id="historyEmpty" class="empty" style="display:none">No events yet.</div>
+        </div>
+
+        <div class="card" id="leaderCard" style="margin-top:12px; display:none">
+          <div class="row" style="justify-content:space-between; align-items:center">
+            <div style="font-weight:900">🔥 Most consistent learners (all time)</div>
+            <div class="row">
+              <span class="chip" id="statTotal">💰 Total points: 0</span>
+              <span class="chip" id="statAvg">🔥 Avg streak: 0</span>
+              <span class="chip" id="statWarn">⚠️ Warnings today: 0</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="row" id="top3" style="flex-wrap:wrap; gap:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="studentView" style="display:none; max-width:560px; margin:0 auto">
+    <div class="card">
+      <div class="row" style="gap:10px">
+        <div class="avatar" id="svAvatar"></div>
+        <div>
+          <div class="name" id="svName">—</div>
+          <div id="svBadges" class="badgesInline"></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:6px"><div>Points</div><div class="points" id="svPoints">0</div></div>
+      <div class="row"><div>Streak</div><div id="svStreak" class="pill fire0">🔥 0 days</div></div>
+      <div class="row"><div>Last study day</div><div id="svLast">—</div></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="row" style="justify-content:space-between; align-items:center">
+        <div style="font-weight:900">Rewards Store</div>
+        <div class="pill" id="svWallet">— pts</div>
+      </div>
+      <div id="svStoreItems" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:900">Your history</div>
+      </div>
+      <div id="svHistory" class="history" style="margin-top:8px"></div>
+      <div id="svHistoryEmpty" class="empty" style="display:none">No events yet.</div>
+      <div class="divider"></div>
+      <button class="btn small ghost" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <footer>MilkHunters ©</footer>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2000); }
+const fmtDate = d => new Date(d).toLocaleDateString();
+function fireTier(streak){ if(streak>=30) return 4; if(streak>=10) return 3; if(streak>=5) return 2; if(streak>=1) return 1; return 0; }
+
+const Sound=(function(){let ctx=null,enabled=true;function init(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+function resume(){try{if(ctx&&ctx.state==='suspended')ctx.resume()}catch(e){}}
+function set(on){enabled=on;if(on){init();resume()}}function osc(f,t='sine',s=0,d=.22,g=.06){if(!enabled)return;init();if(!ctx)return;resume();const ct=ctx.currentTime+s,o=ctx.createOscillator(),gn=ctx.createGain();o.type=t;o.frequency.setValueAtTime(f,ct);gn.gain.setValueAtTime(g,ct);gn.gain.exponentialRampToValueAtTime(.0001,ct+d);o.connect(gn);gn.connect(ctx.destination);o.start(ct);o.stop(ct+d)}
+function good(){osc(554.37,'triangle',0,.16,.08);osc(698.46,'triangle',.05,.16,.07);osc(830.61,'triangle',.1,.16,.06)}
+function bad(){for(let i=0;i<6;i++){osc(480-45*i,'sawtooth',.02*i,.12,.045)}}function redeem(){osc(880,'sine',0,.08,.06);osc(1318.51,'triangle',.04,.1,.06);osc(1760,'triangle',.08,.12,.05)}return{init:()=>{},resume,set,good,bad,redeem}})();
+function toggleSound(){ const s=ensureState(); setState(st=>{ st.muted = !s.muted; }); const on=!ensureState().muted; Sound.set(on); $('#muteBtn').textContent = on ? '🔊 Sound' : '🔇 Muted'; }
+
+const DBKEY='eduboost_auth_v8_3_3';
+const storage={get(){try{return JSON.parse(localStorage.getItem(DBKEY)||'{}')}catch(e){return{}}},set(v){localStorage.setItem(DBKEY,JSON.stringify(v))}};
+function ensureState(){const s=storage.get(); if(!s.users||typeof s.users!=='object') s.users={}; if(!s.current) s.current=null; if(!s.auth) s.auth={pin:null,role:null,student:null}; if(typeof s.muted!=='boolean') s.muted=false; storage.set(s); return s}
+function setState(mut){const s=ensureState(); mut(s); storage.set(s); render()}
+
+function showAuth(role){$('#authTeacher').style.display=role==='teacher'?'block':'none'; $('#authStudent').style.display=role==='student'?'block':'none'; setTimeout(()=>{ if(role==='teacher') $('#tPin').focus(); else $('#sName').focus(); }, 0);}
+function teacherLogin(){ const pin=($('#tPin').value||'').trim(); if(pin.length<4){toast('Enter 4–12 digit PIN'); return;} setState(s=>{ if(!s.auth.pin) s.auth.pin=pin; }); const s=ensureState(); if(s.auth.pin!==pin){toast('Wrong PIN'); return;} setState(st=>{ st.auth.role='teacher'; st.auth.student=null; }); }
+function studentLogin(){ const name=($('#sName').value||'').trim(); if(!name){toast('Enter your name'); return;} const s=ensureState(); if(!s.users[name]){toast('No such student'); return;} setState(st=>{ st.auth.role='student'; st.auth.student=name; st.current=name; }); }
+function logout(){ setState(s=>{ s.auth={pin:s.auth.pin,role:null,student:null}; }); location.reload(); }
+document.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ if($('#authView').style.display!=='none'){ if($('#authTeacher').style.display!=='none') teacherLogin(); else if($('#authStudent').style.display!=='none') studentLogin(); } }});
+
+function addStudentByName(name){ name=(name||'').trim(); if(!name){toast('Enter a name');return} setState(s=>{ if(!s.users[name]) s.users[name]={points:0,streak:0,lastStudy:null,redeemed:0,events:[],avatar:{kind:'emoji',value:(name[0]||'S').toUpperCase()},lastPurchaseAt:null,lastPurchaseTitle:null,lastNegAt:null,lastNegTitle:null}; if(!s.current) s.current=name; }); toast(`Added: ${name}`); }
+function addStudentClick(){ const v=$('#newStudent').value; $('#newStudent').value=''; addStudentByName(v); }
+function bulkAdd(text){ const arr=(text||'').split(/[\n,]+/).map(t=>t.trim()).filter(Boolean).slice(0,300); if(!arr.length){toast('Nothing to add');return} setState(s=>{ arr.forEach(n=>{ if(!s.users[n]) s.users[n]={points:0,streak:0,lastStudy:null,redeemed:0,events:[],avatar:{kind:'emoji',value:(n[0]||'S').toUpperCase()},lastPurchaseAt:null,lastPurchaseTitle:null,lastNegAt:null,lastNegTitle:null}; }); if(!s.current) s.current=arr[0]; }); toast(`Added ${arr.length} students`); }
+function bulkAddClick(){ const v=$('#bulk').value; $('#bulk').value=''; bulkAdd(v); }
+function clearClass(){ setState(s=>{ s.users={}; s.current=null; }); toast('Class cleared'); }
+function resetApp(){ localStorage.removeItem(DBKEY); toast('App data cleared'); setTimeout(()=>location.reload(),300); }
+
+function normalizeUrl(v){ if(/^data:image\//i.test(v)) return v; if(/^https?:\/\//i.test(v)) return v; return 'https://'+v.replace(/^\/+/, ''); }
+function setAvatarFor(name, obj){ setState(st=>{ st.users[name].avatar = obj; }); }
+function previewImage(url, ok, fail){ const img=new Image(); img.crossOrigin='anonymous'; img.loading='eager'; img.onload=()=>ok(url); img.onerror=()=>fail&&fail(); img.src=url; }
+function editAvatar(){
+  const s=ensureState(); const name=s.current; if(!name){ toast('Select a student'); return; }
+  const u=s.users[name];
+  const hint="Paste image URL (https/http or without scheme), data:image... or type an emoji/letter.\nEmpty = reset to initial.";
+  const curr=(u.avatar?.kind==='url'?u.avatar.value:(u.avatar?.value||''));
+  const input=prompt(hint, curr||''); if(input===null) return;
+  const raw=(input||'').trim();
+  if(!raw){ setAvatarFor(name, {kind:'emoji', value:(name[0]||'S').toUpperCase()}); toast('Avatar reset'); return; }
+  if(/^data:image\//i.test(raw) || /^https?:\/\//i.test(raw) || /^[\w.-]+\.[a-z]{2,}([\/?#].*)?$/i.test(raw)){
+    const url=normalizeUrl(raw);
+    previewImage(url, okUrl=>{ setAvatarFor(name,{kind:'url',value:okUrl}); toast('Avatar set'); }, ()=>{ setAvatarFor(name,{kind:'emoji',value:(name[0]||'S').toUpperCase()}); toast('Image failed to load'); });
+    return;
+  }
+  const ch=[...raw][0] || (name[0]||'S'); setAvatarFor(name, {kind:'emoji', value:ch}); toast('Avatar set (emoji/letter)');
+}
+function resetStudent(){ const s=ensureState(); const name=s.current; if(!name){ toast('Select a student'); return; } if(!confirm(`Reset ${name}? Points, streak and history will be cleared.`)) return;
+  setState(st=>{ st.users[name]={points:0,streak:0,lastStudy:null,redeemed:0,events:[],avatar:{kind:'emoji',value:(name[0]||'S').toUpperCase()},lastPurchaseAt:null,lastPurchaseTitle:null,lastNegAt:null,lastNegTitle:null}; }); toast('Student reset'); }
+
+function addEvent(name,type,title,delta,el){
+  setState(s=>{
+    const u=s.users[name]; if(!u) return;
+    u.points=Math.max(0,(u.points||0)+delta);
+    if(!Array.isArray(u.events)) u.events=[];
+    u.events.unshift({type,title,delta,at:new Date().toISOString()});
+    u.events=u.events.slice(0,100);
+    if(type==='purchase'){u.redeemed=(u.redeemed||0)+1;u.lastPurchaseAt=new Date().toISOString();u.lastPurchaseTitle=title;}
+    if(type==='negative'){u.lastNegAt=new Date().toISOString();u.lastNegTitle=title;}
+  });
+  const st=ensureState();
+  if(delta>0){ if(!st.muted){Sound.good()} celebrateFrom(el,'good'); }
+  if(delta<0){ if(!st.muted){Sound.bad()} celebrateFrom(el,'bad'); }
+  render();
+}
+function act(kind,ev){
+  const s=ensureState(); if(!s.current){ toast('Select a student'); return; }
+  const btn=ev?.currentTarget||null;
+  if(kind==='study'){ setState(st=>{ const u=st.users[st.current]; if(!u)return; u.streak=(u.streak||0)+1; u.lastStudy=new Date().toISOString(); }); addEvent(s.current,'positive','Studied today',+20,btn); }
+  if(kind==='hw'){ addEvent(s.current,'positive','Homework done',+40,btn); }
+  if(kind==='task'){ addEvent(s.current,'positive','Task completed',+50,btn); }
+  if(kind==='help'){ addEvent(s.current,'positive','Helped a classmate',+30,btn); }
+  if(kind==='quiz'){ addEvent(s.current,'positive','Mini-quiz',+20,btn); }
+  if(kind==='warn'){ addEvent(s.current,'negative','Bad behavior',-10,btn); }
+  if(kind==='late'){ addEvent(s.current,'negative','Late to class',-20,btn); }
+  if(kind==='miss'){ addEvent(s.current,'negative','Homework missing',-30,btn); }
+  if(kind==='disrupt'){ addEvent(s.current,'negative','Disrupted lesson',-50,btn); }
+}
+
+const STORE=[
+  {id:'plus1', title:'+1 test point', cost:1000, desc:'Teacher adds +1 to next test'},
+  {id:'hwticket', title:'Homework skip ticket', cost:800, desc:'Skip one homework without penalty'},
+  {id:'deadline', title:'Extra project day', cost:600, desc:'+24h for a project deadline'},
+  {id:'quiz_choice', title:'Choose next quiz topic', cost:700, desc:'Student selects topic focus'},
+  {id:'badge', title:'Teacher badge', cost:400, desc:'Recognition for great effort'},
+  {id:'retry', title:'Exam retry token', cost:1200, desc:'One retry on a failed test'}
+];
+function renderStore(boxId, user, redeemFn){
+  const box=$(boxId); box.innerHTML='';
+  STORE.forEach(it=>{
+    const row=document.createElement('div'); row.className='storeRow';
+    const left=document.createElement('div'); left.innerHTML=`<div style="font-weight:900">${it.title}</div><div class="muted">${it.desc}</div>`;
+    const btn=document.createElement('button'); btn.className='btn small'; btn.textContent=`Redeem — ${it.cost} pts`;
+    const enough=user && (user.points||0)>=it.cost;
+    if(!user){ btn.disabled=true; btn.className='btn small ghost'; btn.textContent='Select a student'; }
+    else if(!enough){ btn.disabled=true; btn.className='btn small ghost'; btn.textContent=`Need ${it.cost-(user.points||0)} more`; }
+    btn.onclick=(e)=>redeemFn(it, e.currentTarget);
+    row.appendChild(left); row.appendChild(btn); box.appendChild(row);
+  });
+}
+function renderStoreTeacher(){ const s=ensureState(); const name=s.current; const u=name?s.users[name]:null;
+  renderStore('#storeItems', u, (it,btn)=>{ const st=ensureState(); if(!st.current) return toast('Select a student'); if((st.users[st.current].points||0)<it.cost) return toast('Not enough points'); addEvent(st.current,'purchase',it.title,-it.cost,btn); if(!ensureState().muted){ Sound.redeem(); } });
+  $('#walletBadge').textContent=u?`${u.points||0} pts`:'— pts';
+}
+function renderStoreStudent(){ const s=ensureState(); const name=s.auth.student; const u=name?s.users[name]:null;
+  renderStore('#svStoreItems', u, (it,btn)=>{ const st=ensureState(); const nm=st.auth.student; if(!nm) return toast('No student profile'); if((st.users[nm].points||0)<it.cost) return toast('Not enough points'); addEvent(nm,'purchase',it.title,-it.cost,btn); if(!ensureState().muted){ Sound.redeem(); } });
+  $('#svWallet').textContent=u?`${u.points||0} pts`:'— pts';
+}
+
+function inlineBadgesEl(u){
+  const defs=[
+    {id:'p100', title:'100 pts', color:'#d9b8ff'}, {id:'p500', title:'500 pts', color:'#b6c8ff'},
+    {id:'p1k', title:'1000 pts', color:'#9ec2ff'}, {id:'p2k', title:'2000 pts', color:'#7fb0ff'},
+    {id:'s1', title:'1‑day streak', color:'#d9b8ff'}, {id:'s3', title:'3‑day streak', color:'#b9ffd8'},
+    {id:'s5', title:'5‑day streak', color:'#ffd36b'}, {id:'s10', title:'10‑day streak', color:'#ffd36b'},
+    {id:'s30', title:'30‑day streak', color:'#c7b3ff'}, {id:'s60', title:'60‑day streak', color:'#b19bff'},
+    {id:'s100', title:'100‑day streak', color:'#9fb7ff'},
+    {id:'r1', title:'First reward', color:'#d9b8ff'}, {id:'r5', title:'5 rewards', color:'#b9ffd8'},
+    {id:'r10', title:'10 rewards', color:'#ffd46b'}
+  ];
+  const c={p100:u.points>=100,p500:u.points>=500,p1k:u.points>=1000,p2k:u.points>=2000,s1:u.streak>=1,s3:u.streak>=3,s5:u.streak>=5,s10:u.streak>=10,s30:u.streak>=30,s60:u.streak>=60,s100:u.streak>=100,r1:(u.redeemed||0)>=1,r5:(u.redeemed||0)>=5,r10:(u.redeemed||0)>=10};
+  const wrap=document.createElement('div'); wrap.className='badgesInline';
+  defs.forEach(b=>{ if(c[b.id]){ const chip=document.createElement('span'); chip.className='badge'; chip.style.color=b.color; chip.textContent='🏅 '+b.title; wrap.appendChild(chip);} });
+  return wrap;
+}
+
+function parsePointsInput(raw){ if(raw==null) return NaN; const cleaned=(raw+'').replace(/[,\s]+/g,''); const m=cleaned.match(/^([+-]?)(\d{1,6})$/); if(!m) return NaN; const sign=m[1]==='-'?-1:1; return sign*parseInt(m[2],10); }
+function applyManualClick(ev){
+  const s=ensureState(); if(!s.current){ return toast('Select a student'); }
+  const val=$('#manualPoints').value; $('#manualPoints').value='';
+  const num=parsePointsInput(val);
+  if(isNaN(num)){ toast('Enter number like +100 or -50'); return; }
+  addEvent(s.current, num>=0?'positive':'negative', 'Manual adjust', num, ev?.currentTarget||null);
+}
+
+function renderRoster(){
+  const s=ensureState(); const q=($('#search').value||'').toLowerCase().trim();
+  const names=Object.keys(s.users); $('#emptyHint').style.display=names.length?'none':'block';
+  const list=names.sort((a,b)=>a.localeCompare(b)).filter(n=>!q||n.toLowerCase().includes(q));
+  const box=$('#roster'); box.innerHTML='';
+  list.forEach(name=>{
+    const u=s.users[name];
+    const row=document.createElement('div'); row.className='studentRow';
+    const main=document.createElement('div'); main.style.display='flex'; main.style.alignItems='center'; main.style.gap='10px';
+    const av=document.createElement('div'); av.className='avatar';
+    if(u.avatar?.kind==='url'){ const img=document.createElement('img'); img.src=u.avatar.value; img.alt='avatar'; av.appendChild(img); } else { av.textContent=(u.avatar?.value||(name[0]||'S')).toString(); }
+    const middle=document.createElement('div');
+    const nm=document.createElement('div'); nm.className='name'; nm.textContent=name;
+    const meta=document.createElement('div'); meta.className='meta';
+    const tier=fireTier(u.streak||0);
+    const fire=`<span class="pill fire${tier}">🔥 ${u.streak||0}</span>`;
+    let cart='',warn='';
+    if(u.lastPurchaseAt){ const t=new Date(u.lastPurchaseAt).getTime(); if(!isNaN(t)&&Date.now()-t<120000){ cart=` <span class="pill">🛒 ${u.lastPurchaseTitle||'Purchased'}</span>`; } }
+    if(u.lastNegAt){ const t=new Date(u.lastNegAt).getTime(); if(!isNaN(t)&&Date.now()-t<120000){ warn=` <span class="pill" style="background:#3a1120;color:#ffd3d3">⚠️ ${u.lastNegTitle||'Warning'}</span>`; } }
+    meta.innerHTML=`${fire} • <span>${u.points||0} pts</span>${cart}${warn}`;
+    middle.appendChild(nm); middle.appendChild(meta);
+    main.appendChild(av); main.appendChild(middle);
+    const selectBtn=document.createElement('button'); selectBtn.className='btn small'; selectBtn.textContent='Select';
+    selectBtn.onclick=()=> setState(st=>{ st.current=name; });
+    row.appendChild(main); row.appendChild(selectBtn);
+    box.appendChild(row);
+  });
+  $('#leaderCard').style.display=names.length?'block':'none';
+}
+function renderProfile(){
+  const s=ensureState(); const name=s.current; const u=name?s.users[name]:null;
+  $('#pfName').textContent=name||'—';
+  const av=$('#pfAvatar'); av.innerHTML='';
+  if(u){ if(u.avatar?.kind==='url'){ const img=document.createElement('img'); img.src=u.avatar.value; img.alt='avatar'; av.appendChild(img); } else { av.textContent=(u.avatar?.value||(name[0]||'S')).toString(); } }
+  else { av.textContent='S'; }
+  const nb=$('#nameBadges'); nb.innerHTML=''; if(u) nb.appendChild(inlineBadgesEl(u));
+  $('#pointsVal').textContent=u?(u.points||0):0;
+  const st=u?(u.streak||0):0; const tier=fireTier(st); const sv=$('#streakVal'); sv.textContent=`🔥 ${st} days`; sv.className=`pill fire${tier}`;
+  $('#redeemedCount').textContent=u?(u.redeemed||0):0;
+  $('#lastStudy').textContent=u&&u.lastStudy?fmtDate(u.lastStudy):'—';
+  $('#walletBadge').textContent=u?`${u.points||0} pts`:'— pts';
+}
+function renderHistory(){
+  const s=ensureState(); const name=s.current; const u=name?s.users[name]:null;
+  const box=$('#historyBox'); const empty=$('#historyEmpty'); box.innerHTML='';
+  const arr=(u&&Array.isArray(u.events))?u.events:[]; empty.style.display=arr.length?'none':'block';
+  arr.forEach(p=>{
+    const row=document.createElement('div'); row.className='h'+(p.delta<0?' negative':'');
+    row.innerHTML=`<div>${p.delta<0?'⚠️ ':''}${p.title}</div><div><span class="badge" style="color:${p.delta>=0?'#b9ffd8':'#ffb3b3'}">${p.delta>=0?'+':''}${p.delta} pts</span> <span class="muted">${new Date(p.at).toLocaleString()}</span></div>`;
+    box.appendChild(row);
+  });
+}
+function renderStudentView(){
+  const s=ensureState(); const name=s.auth.student; const u=name?s.users[name]:null;
+  $('#svName').textContent=name||'—';
+  const av=$('#svAvatar'); av.innerHTML='';
+  if(u){ if(u.avatar?.kind==='url'){ const img=document.createElement('img'); img.src=u.avatar.value; img.alt='avatar'; av.appendChild(img); } else { av.textContent=(u.avatar?.value||(name[0]||'S')).toString(); } } else { av.textContent='S'; }
+  const nb=$('#svBadges'); nb.innerHTML=''; if(u) nb.appendChild(inlineBadgesEl(u));
+  $('#svPoints').textContent=u?(u.points||0):0;
+  const st=u?(u.streak||0):0; const tier=fireTier(st); const sv=$('#svStreak'); sv.textContent=`🔥 ${st} days`; sv.className=`pill fire${tier}`;
+  $('#svLast').textContent=u&&u.lastStudy?fmtDate(u.lastStudy):'—';
+  const hb=$('#svHistory'); const empty=$('#svHistoryEmpty'); hb.innerHTML='';
+  const arr=(u&&Array.isArray(u.events))?u.events:[]; empty.style.display=arr.length?'none':'block';
+  arr.forEach(p=>{
+    const row=document.createElement('div'); row.className='h'+(p.delta<0?' negative':'');
+    row.innerHTML=`<div>${p.delta<0?'⚠️ ':''}${p.title}</div><div><span class="badge" style="color:${p.delta>=0?'#b9ffd8':'#ffb3b3'}">${p.delta>=0?'+':''}${p.delta} pts</span> <span class="muted">${new Date(p.at).toLocaleString()}</span></div>`;
+    hb.appendChild(row);
+  });
+  renderStoreStudent();
+}
+function renderLeaderboard(){
+  const s=ensureState(); const top=$('#top3'); if(!top) return; top.innerHTML='';
+  const arr=Object.entries(s.users).map(([name,u])=>({name,streak:u.streak||0,avatar:u.avatar||{kind:'emoji',value:(name[0]||'S')}}));
+  arr.sort((a,b)=>b.streak-a.streak);
+  arr.slice(0,3).forEach((x,i)=>{
+    const card=document.createElement('div'); card.className='row'; card.style.padding='8px 10px'; card.style.border='1px solid var(--border)'; card.style.borderRadius='12px'; card.style.background='rgba(255,255,255,.04)';
+    const av=document.createElement('div'); av.className='avatar'; if(x.avatar.kind==='url'){ const img=document.createElement('img'); img.src=x.avatar.value; img.alt='avatar'; av.appendChild(img); } else { av.textContent=x.avatar.value; }
+    const nameEl=document.createElement('div'); nameEl.className='name'; nameEl.textContent=(i===0?'🥇 ':i===1?'🥈 ':'🥉 ')+x.name;
+    const fire=document.createElement('span'); fire.className='pill'; fire.textContent=`🔥 ${x.streak}`;
+    card.appendChild(av); card.appendChild(nameEl); card.appendChild(fire); top.appendChild(card);
+  });
+  let total=0,streakSum=0,warnToday=0; const today=(new Date()).toISOString().slice(0,10);
+  Object.values(s.users).forEach(u=>{ total+=(u.points||0); streakSum+=(u.streak||0);
+    if(Array.isArray(u.events)) warnToday+=u.events.filter(e=> e.type==='negative' && (e.at||'').slice(0,10)===today).length; });
+  const count=Math.max(1,Object.keys(s.users).length);
+  $('#statTotal').textContent=`💰 Total points: ${total}`;
+  $('#statAvg').textContent=`🔥 Avg streak: ${(streakSum/count).toFixed(1)}`;
+  $('#statWarn').textContent=`⚠️ Warnings today: ${warnToday}`;
+}
+
+function render(){
+  const s=ensureState();
+  Sound.set(!s.muted);
+  $('#muteBtn').textContent = s.muted ? '🔇 Muted' : '🔊 Sound';
+  if(s.auth.role==='teacher'){ $('#authView').style.display='none'; $('#teacherView').style.display='block'; $('#studentView').style.display='none'; renderStoreTeacher(); }
+  else if(s.auth.role==='student'){ $('#authView').style.display='none'; $('#teacherView').style.display='none'; $('#studentView').style.display='block'; renderStudentView(); }
+  else { $('#authView').style.display='block'; $('#teacherView').style.display='none'; $('#studentView').style.display='none'; }
+  renderRoster(); renderProfile(); renderHistory(); renderLeaderboard();
+}
+function clearHistory(){ const s=ensureState(); const name=s.current; if(!name) return; setState(st=>{ if(st.users[name]) st.users[name].events=[]; }); }
+
+function celebrateFrom(el,kind='good'){ if(!el) return; const r=el.getBoundingClientRect(); celebrate(r.left+r.width/2, r.top, kind); }
+function celebrate(x,y,kind='good'){ const box=$('#confetti'); if(!box) return; const iconsGood=['✨','🎉','🔥','⭐','💎','🏅']; const iconsBad=['💩','😡','👎','🤬','💢']; const icons=kind==='bad'?iconsBad:iconsGood; for(let i=0;i<24;i++){ const el=document.createElement('div'); el.className='piece'; el.style.left=(x+(Math.random()*80-40))+'px'; el.style.top=(y+(Math.random()*40-20))+'px'; el.style.setProperty('--x',(Math.random()*120-60)+'px'); el.style.setProperty('--y',(Math.random()*-80-40)+'px'); el.textContent=icons[Math.floor(Math.random()*icons.length)]; box.appendChild(el); setTimeout(()=>box.removeChild(el),1300); } }
+
+function init(){ showAuth('teacher'); render(); }
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
